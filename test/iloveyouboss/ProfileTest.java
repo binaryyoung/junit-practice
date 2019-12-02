@@ -3,26 +3,31 @@ package iloveyouboss;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import iloveyouboss.Profile;
-import iloveyouboss.Question;
 
 public class ProfileTest {
+	private Profile profile;
+	private BooleanQuestion question;
+	private Criteria criteria;
 
+	@Before
+	public void create() {
+		profile = new Profile("Bull Hockey, Inc. ");
+		question = new BooleanQuestion(1, "Got Bonus?");
+		criteria = new Criteria();
+	}
+	
 	/**
 	 * 가중치가 MustMatch인 질문의 답변이 서로 다른 경우
 	 */
 	@Test
 	public void matchAnswerFalseWhenMustMatchCriteriaNotMet() {
-		Profile profile = new Profile("Bull Hockey, Inc.");
-		Question question = new BooleanQuestion(1, "Got Bonuses?");
-		Answer profileAnswer = new Answer(question, Bool.FALSE);
-		profile.add(profileAnswer);
-		Criteria criteria = new Criteria();
-		Answer criteriaAnswer = new Answer(question, Bool.TRUE);
-		Criterion criterion = new Criterion(criteriaAnswer, Weight.MustMatch);
-		criteria.add(criterion);
+		profile.add(new Answer(question, Bool.FALSE));
+		criteria.add(new Criterion(new Answer(question, Bool.TRUE),
+				Weight.MustMatch));
 		
 		boolean matches = profile.matches(criteria);
 			
@@ -34,14 +39,9 @@ public class ProfileTest {
 	 */
 	@Test
 	public void matchAnswerTrueForAnyDontCareCriteria() {
-		Profile profile = new Profile("Bull Hockey, Inc.");
-		Question question = new BooleanQuestion(1, "Got Milk?");
-		Answer profileAnswer = new Answer(question, Bool.FALSE);
-		profile.add(profileAnswer);
-		Criteria criteria = new Criteria();
-		Answer criteriaAnswer = new Answer(question, Bool.TRUE);
-		Criterion criterion = new Criterion(criteriaAnswer, Weight.DontCare);
-		criteria.add(criterion);
+		profile.add(new Answer(question, Bool.FALSE));
+		criteria.add(new Criterion(new Answer(question, Bool.TRUE),
+				Weight.DontCare));
 		
 		boolean matches = profile.matches(criteria);
 		
